@@ -35,43 +35,44 @@ if (($_SERVER['REQUEST_METHOD'] === "POST") && (isset($_POST['submit']))) {
         $password = trim($_POST['password']);
     }
 
+try {
 
-    try {
+    if (!empty($email)) {
 
-        if ($email) {
+        // check email already exists
+        $sql_select = "SELECT email FROM users WHERE email = :email";
+        $stmt = $connect->prepare($sql_select);
+        $stmt->bindParam(":email", $email);
+        $stmt->execute();
 
-            $sql_select =  "SELECT email FROM users where email = :email";
-            $stmt = $connect->prepare($sql_select);
-            $stmt->bindParam(":email", $email);
-            $stmt->execute();
+        if ($stmt->rowCount() > 0) {
 
-            if ($stmt->rowCount() > 0) {
-                $email_validation = "this email already exist";
-            }
+            $email_validation = "this email already exist";
+
         } else {
 
-            // insert data into database
-            $sql_insert = "INSERT INTO `users`(`name`, `email`, `password`) 
-                                VALUES (:name,:email,:password)";
+            // insert data
+            $sql_insert = "INSERT INTO users (name,email,password)
+                           VALUES (:name,:email,:password)";
 
-            // statment prepare
             $stmt = $connect->prepare($sql_insert);
 
-            // password hash
             $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
-            // binding data
             $stmt->bindParam(':name', $name, PDO::PARAM_STR);
             $stmt->bindParam(':email', $email, PDO::PARAM_STR);
             $stmt->bindParam(':password', $password_hash, PDO::PARAM_STR);
-        }
 
-            // statement execute 
             $stmt->execute();
-            
-    } catch (Exception $e) {
-        echo "Error : " . $e->getMessage();
+
+            header("Location: login.php");
+            exit;
+        }
     }
+
+} catch (Exception $e) {
+    echo "Error : " . $e->getMessage();
+} 
 }
 ?>
 
