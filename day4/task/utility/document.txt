@@ -59,3 +59,27 @@ CREATE TABLE transactions(
     FOREIGN KEY (acc_id) REFERENCES accounts (acc_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
+
+
+DELIMITER $$
+
+CREATE TRIGGER transaction_balance_update
+AFTER INSERT ON transactions
+FOR EACH ROW
+BEGIN
+
+    IF NEW.transaction_type = 'credit' THEN
+        UPDATE accounts
+        SET balance = balance + NEW.transaction_amount
+        WHERE acc_id = NEW.acc_id;
+    END IF;
+
+    IF NEW.transaction_type = 'debit' THEN
+        UPDATE accounts
+        SET balance = balance - NEW.transaction_amount
+        WHERE acc_id = NEW.acc_id;
+    END IF;
+
+END$$
+
+DELIMITER ;
