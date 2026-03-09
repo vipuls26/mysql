@@ -1,0 +1,174 @@
+// index
+
+SELECT * FROM blog WHERE MATCH(blog_Content) AGAINST('Weather',IN NATURAL LANGUAGE MODE);
+
+
+
+
+
+// query for full text search
+
+SELECT * FROM blog WHERE MATCH(blog_Title,blog_Content) AGAINST('tendency' IN NATURAL LANGUAGE MODE) LIMIT 0, 25;
+
+SELECT * FROM blog WHERE MATCH(blog_Title,blog_Content) AGAINST('Avoid' IN NATURAL LANGUAGE MODE) LIMIT 0, 25;
+
+
+
+// sql injection
+SELECT * FROM users WHERE user_Id = 10001 OR 1=1;
+
+reason cause 2 condition will always true when first is false
+
+
+
+// other 
+SELECT * FROM users WHERE id = 101; DROP TABLE users
+
+this drop table of database 
+
+
+
+// store procedure
+
+
+DELIMITER //
+
+CREATE PROCEDURE getName (
+    IN userName VARCHAR(50)
+)
+BEGIN
+    SELECT * FROM users WHERE name = userName;
+END //
+
+DELIMITER ;
+
+
+
+// calling procedure 
+CALL getName('vipul');
+
+
+// drop procedure
+DROP PROCEDURE IF EXISTS getName;
+
+// email procedure 
+
+CREATE PROCEDURE getEmail ()
+BEGIN 
+	SELECT * FROM users WHERE email = email;
+END;
+
+// calling email procedure without parameter
+CALL getEmail(); 
+
+
+
+// update stored procedure
+
+DELIMITER //
+
+CREATE PROCEDURE updateName (
+    IN new_name VARCHAR(50)
+)
+BEGIN
+    UPDATE users SET name = new_name WHERE id = 1;
+    SELECT * FROM users WHERE name = new_name;
+    
+END //
+
+DELIMITER ;
+
+
+// using stored procedure and also select that record
+
+CALL updateName('vipuls');
+
+
+
+
+
+
+
+
+-------------------------------------trgier------------------------------------------------
+
+
+// audit_trail table 
+
+
+CREATE TABLE audit_trail (
+	audit_id INT PRIMARY KEY AUTO_INCREMENT,
+    id INT ,
+    action_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    action VARCHAR(50),
+    FOREIGN KEY (id) REFERENCES users(id) on DELETE CASCADE
+);
+
+// create trgier for users table
+
+DELIMITER //
+
+CREATE TRIGGER after_user_add 
+AFTER INSERT ON users
+FOR EACH ROW
+BEGIN 
+	INSERT INTO audit_trail (id,action)
+    VALUES(NEW.id,'inserted');
+END //
+
+DELIMITER ;
+
+// this create auto insert value in audit_trail table when new user add
+
+
+// for delete user 
+
+DELIMITER //
+
+CREATE TRIGGER after_user_delete 
+AFTER DELETE ON users
+FOR EACH ROW
+BEGIN 
+	INSERT INTO audit_trail (id,action)
+    VALUES(OLD.id,'delete');
+END;
+
+
+
+// for update user
+
+DELIMITER //
+
+CREATE TRIGGER after_user_update
+AFTER UPDATE ON users
+FOR EACH ROW
+BEGIN 
+	INSERT INTO audit_trail (id,action)
+    VALUES(NEW.id,'update');
+END //
+
+DELIMITER ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------------------------back up sql file ------------------------------------------------------------------------------------
+
+mysqldump -u root -p pagination > backfile.sql
+
+it can genrate .sql .csv and .xml file

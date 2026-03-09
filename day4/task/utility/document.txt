@@ -1,0 +1,61 @@
+// create users table
+
+CREATE TABLE `users` (
+  `user_id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `email` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `register_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `email` (`email`)
+)
+
+
+
+// create accounts table
+CREATE TABLE `accounts` (
+  `acc_id` int NOT NULL AUTO_INCREMENT,
+  `balance` decimal(10,2) NOT NULL,
+  `user_id` int DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`acc_id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `accounts_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
+) 
+
+
+// creating index 
+
+CREATE INDEX user_id_index ON accounts(user_id);
+
+
+
+
+// trigger for balance update
+
+
+DELIMITER //
+
+CREATE TRIGGER user_balance_update
+BEFORE UPDATE ON accounts
+FOR EACH ROW
+BEGIN
+    SET NEW.update_at = CURRENT_TIMESTAMP;
+END //
+
+DELIMITER ;
+
+
+
+// transction table 
+
+CREATE TABLE transactions(
+	transaction_id INT PRIMARY KEY NOT NULL,
+    transaction_type VARCHAR(50) NOT NULL,
+    transaction_amount VARCHAR(50) NOT NULL,
+    acc_id INT,
+    user_id INT,
+    update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (acc_id) REFERENCES accounts (acc_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
+);

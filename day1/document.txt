@@ -1,0 +1,75 @@
+// day-1
+// create database
+CREATE DATABASE student_management_system;
+
+// create table
+CREATE TABLE students(
+	student_id int NOT null PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(50) NOT NULL,
+    email VARCHAR(50) UNIQUE NOT NULL,
+    age int NOT NULL,
+    course json
+);
+
+
+// insert data into table 
+
+INSERT INTO `students` (`name`, `email`, `age`, `course`) VALUES ('sam', 'sam@gmail.com', '20', '[{
+				"technical": ".NET,java,javascript",
+				"non-technical": "datawharehouse,physcis"
+			}]');
+
+// update email from existing table
+
+UPDATE students SET email = 'vipuls26@gmail.com' WHERE student_id = 1;
+
+// check duplicate enter and maintain unique email record
+
+UPDATE students SET email = 'vipuls26@gmail.com' WHERE student_id = 6;
+
+// delete record from database
+
+DELETE FROM students WHERE student_id = 8;
+
+
+
+// add timestamp field
+ALTER TABLE students ADD created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+
+
+
+//day-2
+
+// books 
+CREATE TABLE books(
+	book_id INT PRIMARY KEY AUTO_INCREMENT,
+    book_title VARCHAR(255) NOT NULL,
+    book_author VARCHAR(255) NOT NULL,
+    book_category VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    student_id INT NOT NULL,
+    FOREIGN KEY (student_id) REFERENCES students(student_id)
+);
+
+
+// book-borrowed
+
+CREATE TABLE borrowed_books(
+	student_id INT,
+    book_id INT,
+    PRIMARY KEY (student_id , book_id),
+    FOREIGN KEY (student_id) REFERENCES students (student_id) ON DELETE CASCADE,
+    FOREIGN KEY (book_id) REFERENCES books (book_id) ON DELETE CASCADE
+);
+
+
+// insert book value 
+
+INSERT INTO `books`(`book_title`, `book_author`, `book_category`, `student_id`) 
+        VALUES ('The Grass is Always Greener','Jeffrey Archer','Modern Times','1');
+
+
+
+// select user who borrowed more than 2 book
+SELECT student_id, COUNT(*) as book_borrowed FROM books GROUP BY student_id ORDER BY book_borrowed < 2 LIMIT 3;

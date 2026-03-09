@@ -1,0 +1,237 @@
+// product table
+
+CREATE TABLE product(
+	produt_id INT PRIMARY KEY AUTO_INCREMENT,
+    product_name VARCHAR(255) NOT NULL,
+    product_price DECIMAL(5,2) NOT NULL,
+    product_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+// order table
+CREATE TABLE product_order (
+	order_id INT PRIMARY KEY AUTO_INCREMENT,
+    amount DECIMAL (10,2),
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    product_id INT NOT NULL,
+    FOREIGN KEY (product_id) REFERENCES product (product_id) ON DELETE CASCADE
+);
+
+// select distinct value
+SELECT DISTINCT product_name FROM product;
+
+product_name	
+pen	
+book	
+pencil box	
+mobile	
+earphone	
+tablet	
+headphone	
+
+
+
+// where 
+SELECT * FROM product WHERE product_id = 4;
+
+4	mobile	9999.00	2026-03-06 09:26:08	
+
+
+
+// less than 500
+SELECT * FROM product WHERE product_price < 500;
+
+product_id	product_name	product_price	product_created_at	
+1	        pen	            10.00	        2026-03-06 09:23:42	
+2	        book	        50.00	        2026-03-06 09:23:42	
+3	        pencil box	    13.00	        2026-03-06 09:23:42	
+5	        earphone	    300.00      	2026-03-06 09:42:13	
+
+
+// greater than 500
+SELECT * FROM product WHERE product_price > 500;
+
+product_id	product_name	product_price	product_created_at	
+4	        mobile	        9999.00	        2026-03-06 09:26:08	
+6	        tablet	        6999.00	        2026-03-06 09:26:17	
+9	        headphone	    2500.00	        2026-03-06 09:26:24	
+
+
+// like operator
+SELECT * FROM product WHERE product_name LIKE '%phone';
+
+product_id	product_name	product_price	product_created_at	
+5	        earphone	    300.00	        2026-03-06 09:42:13	
+9	        headphone	    2500.00	        2026-03-06 09:26:24	
+10	        earphone	    500.00	        2026-03-06 09:26:24	
+
+
+// like operator with condition 
+
+// p__ find name start with p and have atleast 3 character
+SELECT * FROM product WHERE product_name LIKE 'p__%';
+
+
+product_id	product_name	product_price	product_created_at	
+1	        pen	            10.00	        2026-03-06 09:23:42	
+3	        pencil box	    13.00	        2026-03-06 09:23:42	
+
+
+// select prodct start with p and end with x
+SELECT * FROM product WHERE product_name LIKE 'p%x';
+
+3	pencil box	13.00	2026-03-06 09:23:42	
+
+
+// select product not start with p and end with x;
+SELECT * FROM product WHERE product_name NOT LIKE 'p%x';
+
+product_id	product_name	product_price	product_created_at	
+1	        pen	            10.00	        2026-03-06 09:23:42	
+2	        book	        50.00	        2026-03-06 09:23:42	
+4	        mobile	        9999.00	        2026-03-06 09:26:08	
+5	        earphone	    300.00	        2026-03-06 09:42:13	
+6	        tablet	        6999.00	        2026-03-06 09:26:17	
+9	        headphone	    2500.00	        2026-03-06 09:26:24	
+10	        earphone	    500.00	        2026-03-06 09:26:24	
+
+
+// in operator 
+SELECT * FROM product WHERE product_name IN ('pen','pencil box','headphone');
+
+product_id	product_name	product_price	product_created_at	
+1	        pen	            10.00	        2026-03-06 09:23:42	
+3	        pencil box	    13.00	        2026-03-06 09:23:42	
+9	        headphone	    2500.00	        2026-03-06 09:26:24	
+
+// between operator
+SELECT * FROM product WHERE product_price BETWEEN 10 AND 50;
+
+product_id	product_name	product_price	product_created_at	
+1	        pen	            10.00	        2026-03-06 09:23:42	
+2	        book	        50.00	        2026-03-06 09:23:42	
+3	        pencil box	    30.00	        2026-03-06 09:23:42	
+
+// between operator 
+SELECT * FROM product WHERE product_created_at BETWEEN '2026-03-06 09:26:08' AND '2026-03-06 09:26:17';
+
+product_id	product_name	product_price	product_created_at	
+4	        mobile	        9999.00	        2026-03-06 09:26:08	
+6	        tablet	        6999.00	        2026-03-06 09:26:17	
+
+
+// not operator
+SELECT * FROM product WHERE product_price NOT BETWEEN 10 AND 100;
+
+product_id	product_name	product_price	product_created_at	
+4	        mobile	        9999.00	        2026-03-06 09:26:08	
+5	        earphone	    300.00	        2026-03-06 09:42:13	
+6	        tablet	        6999.00	        2026-03-06 09:26:17	
+9	        headphone	    2500.00	        2026-03-06 09:26:24	
+10	        earphone	    500.00	        2026-03-06 09:26:24	
+
+// count 
+// return total row from table where price are above than 500
+
+SELECT COUNT(*) FROM product WHERE product_price < 500;
+
+4	
+
+
+// sum
+SELECT SUM(product_price) FROM product;
+20388.00	
+
+// total sum of product whose spelling contain pen in between
+// pen = 10 , pencil box = 30 
+SELECT SUM(product_price) FROM product WHERE product_name LIKE '%pen%';
+40.00	
+
+// total sum of prodcut whose spelling contain o in between
+SELECT SUM(product_price) FROM product WHERE product_name LIKE '%o%';
+13379.00	
+
+// avg price to all prodct_price 
+SELECT AVG(product_price) FROM product;
+2548.500000	
+
+// GROUP BY function
+SELECT COUNT(product_id), product_name FROM product GROUP BY product_name;
+COUNT(product_id)	product_name	
+1	                pen	
+1	                book	
+1	                pencil box	
+1	                mobile	
+2	                earphone	
+1	                tablet	
+1	                headphone	
+
+// based on avg price to similar product
+SELECT AVG(product_price), product_name FROM product GROUP BY product_name;
+
+
+AVG(product_price)	product_name	
+10.000000	        pen	
+50.000000	        book	
+30.000000	        pencil box	
+9999.000000	        mobile	
+400.000000	        earphone	
+6999.000000	        tablet	
+2500.000000	        headphone	
+
+
+after adding similar product
+
+
+AVG(product_price)	product_name	
+10.000000	        pen	
+50.000000	        book	
+30.000000	        pencil box	
+17499.500000	    mobile	
+400.000000	        earphone	
+10999.500000    	tablet	
+2500.000000	        headphone	
+
+
+// minimun price for product
+SELECT MIN(product_price) as minimun_price FROM product;
+10.00
+
+// maximun price for product
+SELECT MAX(product_price) as maximun_price FROM product;
+25000.00	
+
+// minimun price of phone in product list 
+SELECT min(product_price) as minimum_phone_price FROM product WHERE product_name = 'mobile'; 
+minimum_phone_price
+9999.00	
+
+// maximun price of phone in product list 
+SELECT MAX(product_price) as maximun_phone_price FROM product WHERE product_name = 'mobile';
+
+maximun_phone_price 	
+25000.00
+
+
+
+
+// create view for order detail
+
+CREATE VIEW order_detail as
+SELECT product_order.order_id,product_order.quantity,product_order.product_id ,product_order.total,
+	product.product_name, product.product_price  FROM product_order LEFT JOIN product ON product_order.order_id = product.product_id;
+
+// total sale per user
+
+SELECT user_id, SUM(quantity) AS total_sales
+FROM product_order
+GROUP BY user_id;
+
+
+
+// average order value from order table
+SELECT AVG(total) as average_order_value FROM product_order;
+
+// last 7 days order 
+
+SELECT * FROM product_order WHERE order_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY); 
