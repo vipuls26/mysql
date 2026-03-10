@@ -83,3 +83,55 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+
+
+////
+
+SELECT acc_id, balance, user_id FROM `accounts` WHERE user_id = 9 AND balance > 500;
+
+
+// product table
+CREATE TABLE products(
+	product_id INT PRIMARY KEY AUTO_INCREMENT,
+    product_name VARCHAR(50),
+    product_detail VARCHAR(255),
+    product_image VARCHAR(255),
+    create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    user_id INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+// order table
+CREATE TABLE product_order(
+	order_id INT PRIMARY KEY AUTO_INCREMENT,
+    order_qty INT,
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    total_amount DECIMAL(10,2),
+    product_id INT,
+    user_id INT,
+    FOREIGN KEY (product_id) REFERENCES products (product_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
+);
+
+
+
+// cart table
+
+CREATE TABLE cart (
+	cart_id INT PRIMARY KEY AUTO_INCREMENT,
+    product_id INT ,
+    user_id INT,
+    FOREIGN KEY (product_id) REFERENCES products (product_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
+);
+
+
+
+// join query
+
+
+SELECT c.cart_id, c.user_id, p.product_id, p.product_name, p.product_detail, p.product_price, p.product_image
+FROM cart c
+JOIN products p ON c.product_id = p.product_id WHERE c.user_id = 9
+ORDER BY c.cart_id ASC ;

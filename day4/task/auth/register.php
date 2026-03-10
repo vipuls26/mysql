@@ -1,79 +1,91 @@
 <?php
 
-// echo "<pre>";
-// print_r($_POST);
-// echo "</pre>";
+    // echo "<pre>";
+    // print_r($_POST);
+    // echo "</pre>";
 
-require_once __DIR__ . ('/../utility/db.php');
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
 
-if (($_SERVER['REQUEST_METHOD'] === "POST") && (isset($_POST['submit']))) {
+    session_start();
 
-    //name
-    if (empty($_POST['name']) && isset($_POST['name'])) {
-        $name_validation = "name is required";
-    } elseif (strlen($_POST['name']) < 2) {
-        $name_validation = "mininmux 2 character required";
-    } else {
-        $name = trim($_POST['name']);
+     if (isset($_SESSION['email'])) {
+        header('Location: ../user/dashboard.php');
+        exit;
     }
 
-    // email
-    if (empty($_POST['email']) && isset($_POST['email'])) {
-        $email_validation = "email is required";
-    } elseif (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-        $email_validation = "please enter valid email";
-    } else {
-        $email = trim($_POST['email']);
-    }
+    require_once __DIR__ . ('/../utility/db.php');
 
-    //password
-    if (empty($_POST['password']) && isset($_POST['password'])) {
-        $password_validation = "password is required";
-    } elseif (strlen($_POST['password']) < 5) {
-        $password_validation = "password at least 5 characters";
-    } else {
-        $password = trim($_POST['password']);
-    }
+    if (($_SERVER['REQUEST_METHOD'] === "POST") && (isset($_POST['submit']))) {
 
-try {
-
-    if (!empty($email)) {
-
-        // check email already exists
-        $sql_select = "SELECT email FROM users WHERE email = :email";
-        $stmt = $connect->prepare($sql_select);
-        $stmt->bindParam(":email", $email);
-        $stmt->execute();
-
-        if ($stmt->rowCount() > 0) {
-
-            $email_validation = "this email already exist";
-
+        //name
+        if (empty($_POST['name']) && isset($_POST['name'])) {
+            $name_validation = "name is required";
+        } elseif (strlen($_POST['name']) < 2) {
+            $name_validation = "mininmux 2 character required";
         } else {
+            $name = trim($_POST['name']);
+        }
 
-            // insert data
-            $sql_insert = "INSERT INTO users (name,email,password)
-                           VALUES (:name,:email,:password)";
+        // email
+        if (empty($_POST['email']) && isset($_POST['email'])) {
+            $email_validation = "email is required";
+        } elseif (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+            $email_validation = "please enter valid email";
+        } else {
+            $email = trim($_POST['email']);
+        }
 
-            $stmt = $connect->prepare($sql_insert);
+        //password
+        if (empty($_POST['password']) && isset($_POST['password'])) {
+            $password_validation = "password is required";
+        } elseif (strlen($_POST['password']) < 5) {
+            $password_validation = "password at least 5 characters";
+        } else {
+            $password = trim($_POST['password']);
+        }
 
-            $password_hash = password_hash($password, PASSWORD_DEFAULT);
+        try {
 
-            $stmt->bindParam(':name', $name, PDO::PARAM_STR);
-            $stmt->bindParam(':email', $email, PDO::PARAM_STR);
-            $stmt->bindParam(':password', $password_hash, PDO::PARAM_STR);
+            if (!empty($email)) {
 
-            $stmt->execute();
+                // check email already exists
+                $sql_select = "SELECT email FROM users WHERE email = :email";
+                $stmt = $connect->prepare($sql_select);
+                $stmt->bindParam(":email", $email);
+                $stmt->execute();
 
-            header("Location: login.php");
-            exit;
+                if ($stmt->rowCount() > 0) {
+
+                    $email_validation = "this email already exist";
+                } else {
+
+                    // insert user data
+                    $sql_insert = "INSERT INTO users (name,email,password)
+                            VALUES (:name,:email,:password)";
+
+                    $stmt = $connect->prepare($sql_insert);
+
+                    $password_hash = password_hash($password, PASSWORD_DEFAULT);
+
+                    $stmt->bindParam(':name', $name, PDO::PARAM_STR);
+                    $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+                    $stmt->bindParam(':password', $password_hash, PDO::PARAM_STR);
+
+                    $stmt->execute();
+
+                    $_SESSION['user_email'] = $email;
+
+
+                    header("Location: generateaccount.php");
+                    exit;
+                }
+            }
+        } catch (Exception $e) {
+            echo "Error : " . $e->getMessage();
         }
     }
-
-} catch (Exception $e) {
-    echo "Error : " . $e->getMessage();
-} 
-}
 ?>
 
 <!DOCTYPE html>

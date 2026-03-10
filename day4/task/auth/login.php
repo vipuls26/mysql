@@ -2,6 +2,10 @@
 
     session_start();
 
+    if (isset($_SESSION['email'])) {
+    header('Location: ../user/dashboard.php');
+    exit;
+}
 
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
@@ -54,7 +58,7 @@ if (($_SERVER['REQUEST_METHOD'] === "POST") && (isset($_POST['submit']))) {
 
                     $_SESSION['email'] = $user['email'];
                     $_SESSION['user_id'] = $user['user_id'];
-                    header("Location: ../user/dashbord.php");
+                    header("Location: ../user/dashboard.php");
                     
                 } else {
                     $password_validation = "password is wrong";
@@ -75,10 +79,11 @@ if (($_SERVER['REQUEST_METHOD'] === "POST") && (isset($_POST['submit']))) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>login</title>
+    
+    <!-- bootstrap  -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 
     <!-- jquery validation -->
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
     <!-- jquery validation -->
