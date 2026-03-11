@@ -156,7 +156,7 @@ try {
             } else {
                 $_SESSION['notification'] = "<div class='position-fixed top-0 end-0 p-3' style='z-index: 11' id='notification'>
                                                     <div class='toast show'>
-                                                        <div class='toast-header'>
+                                                        <div class='toast-header bg-warning'>
                                                             <strong class='me-auto'>Nofitication</strong>
                                                             <button type='button' class='btn-close' data-bs-dismiss='toast'></button>
                                                         </div>

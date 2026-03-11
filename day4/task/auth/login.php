@@ -97,10 +97,9 @@ if (($_SERVER['REQUEST_METHOD'] === "POST") && (isset($_POST['submit']))) {
     <div class="container mt-5">
 
         <form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="post" id="loginform">
-            <div class="row d-flex justify-content-center">
-                <div class="title text-center mb-5">Login to sytem</div>
+            <div class="row justify-content-center">
+                <div class="title text-center mb-5 mt-5">Login to sytem</div>
                 <div class="col-6">
-
 
                     <div class="form-floating mb-3">
                         <input type="text" name="email" id="email" class="form-control border-secondary" placeholder="email" value="<?php echo isset($_POST['email']) ? trim($_POST['email']) : '' ?>">

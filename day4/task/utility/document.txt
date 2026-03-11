@@ -56,12 +56,14 @@ CREATE TABLE transactions(
     acc_id INT,
     user_id INT,
     update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    order_id INT,
     FOREIGN KEY (acc_id) REFERENCES accounts (acc_id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE,
+    FOREIGN KEY (order_id) REFERENCES product_order (order_id) ON DELETE CASCADE
 );
 
 
-DELIMITER $$
+DELIMITER //
 
 CREATE TRIGGER transaction_balance_update
 AFTER INSERT ON transactions
@@ -80,7 +82,7 @@ BEGIN
         WHERE acc_id = NEW.acc_id;
     END IF;
 
-END$$
+END//
 
 DELIMITER ;
 
@@ -135,3 +137,29 @@ SELECT c.cart_id, c.user_id, p.product_id, p.product_name, p.product_detail, p.p
 FROM cart c
 JOIN products p ON c.product_id = p.product_id WHERE c.user_id = 9
 ORDER BY c.cart_id ASC ;
+
+
+
+
+// join query for order table 
+
+SELECT c.cart_id , c.product_id , c.user_id , c.qty , p.product_name , p.product_detail , p.product_price , p.product_image
+FROM cart c 
+JOIN products p ON c.product_id = p.product_id WHERE c.cart_id = 33;
+
+
+
+/// trigger for balance update after shopping
+
+DELIMITER //
+
+CREATE TRIGGER update_blance_after_orderPlace 
+AFTER INSERT ON product_order 
+FOR EACH ROW 
+BEGIN   
+    UPDATE accounts 
+    SET balance = balance - NEW.total_amount 
+    WHERE accounts.user_id = NEW.user_id; 
+END// 
+
+DELIMITER ;

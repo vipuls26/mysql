@@ -78,22 +78,30 @@ try {
         <nav class="navbar navbar-expand-md navbar-light bg-white">
             <div class="container-fluid p-0">
 
-                <div class="navbar-nav ms-auto">
-                    <a class="nav-link" href="../product/add.php"> New Product </a>
-                    <a class="nav-link active" href="../product/myproduct.php" aria-current="page"> My product </a>
-                </div>
-
+                <!-- drop down list for link -->
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#myNav" aria-controls="myNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="fas fa-bars"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="myNav">
+
                     <div class="navbar-nav ms-auto">
+
+                        <a class="nav-link" href="../product/add.php"> New Product </a>
+                        
+                        <a class="nav-link active" aria-current="page" href="../product/myproduct.php"> My product </a>
+
                         <a class="nav-link" href="../product/products.php">All</a>
+
                         <a class="nav-link" href="../product/cart.php">Cart</a>
+
+                        <a class="nav-link" href="../product/myorder.php">Order</a>
                     </div>
                 </div>
+
             </div>
         </nav>
+
+        <hr class="border-secondary">
 
         <!-- my product -->
         <div class="row">
@@ -113,26 +121,47 @@ try {
                                         <i class="fa-solid fa-trash me-2"></i> Delete
                                     </a>
                                 </div>
+                                <hr class="border-dark">
+                                <div class="text-dark">
+                                    <p><?= $product['product_name'] ?></p>
+                                    <p> <?= $product['product_detail'] ?> </p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 <?php } ?>
             <?php } else { ?>
 
-                <p>no product found</p>
-
+                <div class="text-center mt-5">
+                    <p>want to sell your product <a class="text-decoration-none" href="../product/add.php"> Start </a> from here. </p>
+                </div>
             <?php } ?>
         </div>
+
+         <!-- toast notification -->
+
+        <?php
+        if (isset($_SESSION['notification'])) {
+            echo $_SESSION['notification'];
+            unset($_SESSION['notification']);
+        } else {
+            echo '';
+        }
+
+        ?>
     </div>
 
     <script>
-
-        $(document).ready(function(){
-            $(".Delete").click(function(){
+        $(document).ready(function() {
+            $(".Delete").click(function() {
                 return confirm("Are you sure?");
             });
-        });
 
+            // for toast notification
+            setTimeout(() => {
+                $('#notification').fadeOut("Fast");
+            }, 3000);
+        });
     </script>
 </body>
 

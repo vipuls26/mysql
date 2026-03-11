@@ -112,8 +112,8 @@
     <div class="container mt-5">
 
         <form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="post" id="registerform">
-            <div class="row d-flex justify-content-center">
-                <div class="title text-center mb-5">register to system</div>
+            <div class="row justify-content-center">
+                <div class="title text-center mb-5 mt-5">register to system</div>
                 <div class="col-6">
                     <div class="form-floating mb-3">
                         <input type="text" name="name" id="name" class="form-control border-secondary" placeholder="name" value="<?php echo isset($_POST['name']) ? $_POST['name'] : '' ?>">
